@@ -20,44 +20,7 @@ function Dashboard({ date }) {
   const [resError, setResError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
   const [tables, setTables] = useState([]);
-  //const [dateShown, setDateShown] = useState(date)
  
-  // //load Reservations
-  // useEffect(() => {
-  //   const abortController = new AbortController();
-
-  //   async function loadDashboad(){
-      
-  //     try {
-  //       setResError(null);
-  //       const reservationsResponse = await listReservations({ date }, abortController.signal);
-  //       setReservations(reservationsResponse);
-  //     }catch (resError){
-  //       setReservations([]);
-  //       setResError(resError);
-  //     }
-  //   }
-  //   loadDashboad();
-  //   return () => abortController.abort();
-  // }, [date]);
-
-  // //load tables
-  // useEffect(() => {
-  //   const abortController = new AbortController();
-
-  //   async function loadTables(){
-  //     try {
-  //       setResError(null);
-  //       const tablesResponse = await listTables(abortController.signal);
-  //       setTables(tablesResponse);
-  //     }catch (resError){
-  //       setTables([]);
-  //       setResError(resError);
-  //     }
-  //   }
-  //   loadTables();
-  //   return () => abortController.abort();
-  // }, []);
 
 
   useEffect(loadDashboard, [date]);
@@ -116,7 +79,7 @@ function Dashboard({ date }) {
           ) : (
             <tbody>
               {reservations.map((reservation, index) => (
-                <ReservationInfo reservation={reservation} loadDashboard={loadDashboard} />
+                <ReservationInfo key={reservation.id} reservation={reservation} loadDashboard={loadDashboard} />
               ))}
             </tbody>
           )}
@@ -135,10 +98,10 @@ function Dashboard({ date }) {
       </div>
 
       <div>
-        <h4 className="mb-0">Table List</h4>
+        <h4>Table List</h4>
         {tables.map((table, index) => (
 
-        <TableList key={table.table_id} table={table} error={tablesError} loadDashboard={loadDashboard} date={date} />
+        <TableList key={table.table_id} table={table} error={tablesError} loadDashboard={loadDashboard}  />
         ))}
       </div>
       {/* {JSON.stringify(reservations)} */}
