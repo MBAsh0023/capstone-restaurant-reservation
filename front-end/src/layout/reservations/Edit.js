@@ -32,7 +32,7 @@ function Edit() {
   const findErrors = (reservation, errors) => {
     notOnTuesday(reservation.reservation_date, errors);
     inTheFuture(reservation.reservation_date, errors);
-    //in-line validation to ensure reservation can be modified
+    
     if (reservation.status && reservation.status !== "booked") {
       errors.push(
         <li key="not booked">Reservation can no longer be changed</li>

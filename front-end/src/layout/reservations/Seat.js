@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router";
 import ErrorAlert from "../ErrorAlert";
-import { listTables, seatReservation} from "../../utils/api";
+import { listTables, seatReservation, readReservation} from "../../utils/api";
 
 function Seat() {
  
@@ -9,25 +9,25 @@ function Seat() {
   const { reservation_id } = useParams();
   const history = useHistory();
 
-  
+  const [reservation, setReservation] = useState([]);
   const [tables, setTables] = useState([]);
   const [seatTable, setSeatTable] = useState(null);
   const [error, setError] = useState([null]);
  
 
-  //load tables
+  //load tables and reservation info
   useEffect(() => {
     const abortController = new AbortController();
 
     async function loadData() {
       try {
         setError(null);
-       
+        const reservationResponse = await readReservation(reservation_id,abortController.signal)
         const tablesResponse = await listTables(abortController.signal);
         const freeTables = tablesResponse.filter((table) => {
           return table.status === "free";
         });
-       // setReservation(reservationResponse);
+        setReservation(reservationResponse);
         setTables(freeTables);
       } catch (error) {
         setError(error);
@@ -43,68 +43,24 @@ function Seat() {
 
   const handleSelect = (e) => {
       setSeatTable(e.target.value)
-      console.log(seatTable)
+      
   }
 
-//   const handleSelect = ({ target }) => {
-//       //setError(null)
-//     const tableSelected = tables.find(
-//       (table) => table.table_id === parseInt(target.value)
-//     );
-//     console.log(tableSelected)
-//     console.log(reservation.reservation_id)
-//     if (tableSelected && tableSelected.capacity < reservation.people) {
-//       setError(["Table capacity will not accomadate reservation size"]);
-//     } else if (!tableSelected) {
-//       setError(["Please select a table."]);
-//     } else {
-//       setError([null]);
-//     }
-//     setSeatTable({
-//       ...seatTable,
-//       [target.name]: parseInt(target.value),
-//     });
-//     console.log(seatTable)
-//   };
 
-  // e.preventDefault();
-  // const abortController = new AbortController();
-  // //put request
-  // setSeatTable(e.target.value);
-  // console.log(seatTable)
-
-  
-//   const handleSubmit = (event) => {
-//     event.preventDefault();
-//     const abortController = new AbortController();
-//     // PUT request
-//     async function seating() {
-//         try {
-//             await seatReservation(seatTable, reservation_id, abortController.signal);
-//             history.push("/dashboard");
-//         } catch (error) {
-//             setError([...error, error.message]);
-//         }
-//     }
-//     // do not send PUT request if there is a pending error message
-//     if (error.length === 0) {
-//         seating();
-//     }
-// }
   
   async function handleSubmit(e) {
     e.preventDefault();
     const { signal, abort } = new AbortController();
     try {
-        //console.log(seatTable)
+        
       const seatResponse = await seatReservation(
         seatTable,
         reservation_id,
         signal
       );
       if (seatResponse) {
-        //console.log(seatResponse)
-        history.push("/dashboard");
+        
+        history.push(`/dashboard?date=${reservation.reservation_date}`);
       }
     } catch (error) {
       setError(error);
@@ -116,12 +72,12 @@ function Seat() {
     <div>
       <ErrorAlert error={error} />
       <div>
-        <h3>Select Table for Reaservation Seating</h3>
-        <form onSubmit={handleSubmit}>
+        <h1 className="d-md-flex justify-content-center m-3">Select Table for Reaservation Seating</h1>
+        <form onSubmit={handleSubmit} className="mb-3">
           <div>
-            <label>
-              Seat at Table Number:
-              <select
+            <label className="form-label mb-2">
+              Seat at Table Name:
+              <select className="form-control"
                 id="table_id"
                 name="table_id"
                 onChange={handleSelect}
@@ -136,10 +92,9 @@ function Seat() {
               </select>
             </label>
           </div>
-          <button type="submit">Submit</button>
-          <button onClick={handleCancel}>Cancel</button>
+          <button type="submit" className="btn btn-info mt-2 mx-2">Submit</button>
+          <button onClick={handleCancel} className="btn btn-warning mt-2 mx-2">Cancel</button>
         </form>
-        {seatTable}
       </div>
     </div>
   );

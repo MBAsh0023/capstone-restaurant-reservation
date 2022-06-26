@@ -28,9 +28,10 @@ function NewReservation() {
           ...form,
           [e.target.name]: e.target.value,
       })
-     // console.log(form)
+     
   }
 
+  
   const dateErrors = (date, errors) => {
       notOnTuesday(date, errors);
       inTheFuture(date,errors);
@@ -39,7 +40,7 @@ function NewReservation() {
  
 
   const handleSubmit = async (event)=> {
-      console.log("submit")
+      
     const { signal, abort } = new AbortController();
     event.preventDefault();
     const errors = [];
@@ -64,7 +65,7 @@ function NewReservation() {
   return (
     <div>
       <ErrorAlert error={resError}/>
-      <h1>New Reservation</h1>
+      <h1 className="d-md-flex justify-content-center p-3">New Reservation</h1>
       <ReservationForm
       formInitialState={form}
       handleSubmit={handleSubmit}

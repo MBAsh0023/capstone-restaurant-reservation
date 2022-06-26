@@ -17,10 +17,11 @@ function ReservationForm({ formInitialState, handleSubmit, handleFormChange }) {
         <div>
             
           <div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="mb-3">
               <div>
-                <label>First Name:</label>
+                <label className="form-label">First Name:</label>
                 <input 
+                className="form-control mb-3"
                 type="text"
                 name="first_name"
                 placeholder={formInitialState?.first_name || "First Name"}
@@ -30,8 +31,9 @@ function ReservationForm({ formInitialState, handleSubmit, handleFormChange }) {
                  />
               </div>
               <div>
-                <label>Last Name:</label>
+                <label className="form-label">Last Name:</label>
                 <input 
+                className="form-control mb-3"
                 type="text"
                 name="last_name"
                 placeholder={formInitialState?.Last_name || "Last Name"}
@@ -41,18 +43,21 @@ function ReservationForm({ formInitialState, handleSubmit, handleFormChange }) {
                  />
               </div>
               <div>
-                <label>Mobile Number:</label>
-                <input 
+                <label className="form-label">Mobile Number:</label>
+                <input
+                className="form-control mb-3" 
                 type="tel"
                 name="mobile_number"
+                placeholder="5555555555"
                 value={formInitialState?.mobile_number}
                 onChange={handleFormChange}
                 required
                  />
               </div>
               <div>
-                <label>Reservation Date:</label>
-                <input 
+                <label className="form-label">Reservation Date:</label>
+                <input
+                className="form-control mb-3" 
                 type="date"
                 name="reservation_date"
                 value={formInitialState?.reservation_date}
@@ -61,8 +66,9 @@ function ReservationForm({ formInitialState, handleSubmit, handleFormChange }) {
                  />
               </div>
               <div>
-                <label>Reservation Time:</label>
-                <input 
+                <label className="form-label">Reservation Time:</label>
+                <input
+                className="form-control mb-3" 
                 type="time"
                 name="reservation_time"
                 value={formInitialState?.reservation_time}
@@ -71,8 +77,9 @@ function ReservationForm({ formInitialState, handleSubmit, handleFormChange }) {
                  />
               </div>
               <div>
-                <label>Number of Guests</label>
-                <input 
+                <label className="form-label">Number of Guests</label>
+                <input
+                className="form-control" 
                 type="number"
                 name="people"
                 value={formInitialState?.people}
@@ -80,9 +87,11 @@ function ReservationForm({ formInitialState, handleSubmit, handleFormChange }) {
                 required />
               </div>
               <button
+              className="btn btn-info mt-2 mx-2"
               type="submit"
               >Submit</button>
               <button
+              className="btn btn-warning mt-2"
               onClick={handleCancel}
               >Cancel</button>
             </form>

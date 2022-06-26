@@ -57,8 +57,7 @@ const hasOnlyValidProperties = require("../errors/hasOnlyValidProperties.js");
  //middleware checks if the value of people is a number
  function peopleIsANumber(req, res, next){
    const { people } = req.body.data;
-   //const peopleInt = parseInt(people)
-   //console.log(typeof peopleInt,"------------")
+   
    if(typeof people === 'number'){
      return next();
    }else{
@@ -89,7 +88,7 @@ function notInThePast(req, res, next){
   const { reservation_date, reservation_time } = req.body.data;
   const now = Date.now()
   const reservation =  new Date(`${reservation_date} PDT`).setHours(reservation_time.substring(0, 2), reservation_time.substring(3))
-  //console.log(reservation)
+  
   if (reservation > now){
     return next();
   }else{
@@ -103,12 +102,11 @@ function notInThePast(req, res, next){
 //middleware check if reservation time is during operating hours
 function duringOperatingHours(req, res, next) {
   const { reservation_time } = req.body.data;
-  //console.log (reservation_time, "--------")
+ 
   const open = 1030;
   const close = 2130;
   const reservation = reservation_time.substring(0, 2) + reservation_time.substring(3);
-  //console.log(reservation_time.substring(0, 2), "--------")
-  //console.log(reservation_time.substring(3), "--------")
+  
   if (reservation > open && reservation < close) {
     return next();
   } else {
@@ -125,10 +123,10 @@ async function reservationExist(req,res,next){
   const reservation = await service.read(reservationId)
     if(reservation){
       res.locals.reservation = reservation
-      //console.log(reservation,"----------")
+      
       return next()
     }else{
-      //console.log("no reservation","---------------------")
+      
         next({ 
           status: 404, 
           message: `Reservation ${reservationId} cannot be found.` });
@@ -162,7 +160,7 @@ async function byDateAndPhone(req, res, next) {
 //middleware to check reservation status
 function reservationStatus(req, res, next){
   const { status } = req.body.data
-  //console.log(status, "--------------")
+  
   if (status){
     
     if (status === "booked"){
@@ -181,11 +179,11 @@ function reservationStatus(req, res, next){
 //middleware to check reservation status
 function reservationStatusForUpdate(req, res, next){
   const { status } = req.body.data
-  //console.log(status, "--------------")
+  
   validStatuses = ["booked", "seated", "finished", "cancelled"]
   if (validStatuses.includes(status)){
    res.locals.status = status;
-   //console.log("correct status","----------")
+   
     return next()
   
   }else {
@@ -199,7 +197,7 @@ function reservationStatusForUpdate(req, res, next){
 //middleware checks if status is finished
 function statusIsFinished(req, res, next){
   const { reservation } = res.locals;
-  //console.log(reservation.status,"-----------")
+  
   if(reservation.status === "finished"){
     return next({
       status: 400,
@@ -222,28 +220,28 @@ function list(req, res) {
 
  function read(req, res){
   const { reservation } = res.locals
-  //console.log(reservation, "------------")
+  
   res.json({ data: reservation })
 }
 
 // updates a reservation status
 async function updateStatus(req, res) {
   const { reservation, status } = res.locals
-  //console.log(status, "------------")
+
   const updatedReservationData = {
     ...reservation,
     status: status,
   }
   const updatedReservation = await service.update(updatedReservationData);
-  //console.log(updatedReservation)
+ 
   res.json({ data: updatedReservation });
 }
  
  async function updateReservation(req,res){
   const { reservation } = res.locals;
-    //console.log(reservation,"--------")
+    
     const { data } = req.body;
-    //console.log(data, "-------------")
+    
     const updatedReservationData = {
       ...reservation,
       ...data,

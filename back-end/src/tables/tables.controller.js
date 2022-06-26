@@ -23,8 +23,7 @@ function characterLength(req, res, next) {
 //middleware checks if capacity is a number
 function isNumber(req, res, next) {
   const { capacity } = req.body.data;
-  //console.log(capacity, "----------------")
-  //console.log(typeof capacity, "---------------")
+  
   if (typeof capacity === "number") {
     return next();
   } else {
@@ -44,7 +43,7 @@ async function tableExist(req, res, next) {
     res.locals.table = table;
     return next();
   } else {
-    //console.log("no table","---------------------")
+    
     next({
       status: 404,
       message: `Reservation ${table_id} cannot be found.`,
@@ -56,7 +55,7 @@ async function tableExist(req, res, next) {
 async function reservationExist(req,res,next){
   const { reservation_id } = req.body.data
   const reservation = await reservationService.read(reservation_id)
- // console.log(reservation)
+ 
     if(reservation && reservation.status !== "seated"){
       res.locals.reservation = reservation
       return next()
@@ -66,7 +65,7 @@ async function reservationExist(req,res,next){
         message:`reservation_id ${reservation_id} is already seated `
       })
     }else{
-      //console.log("does not exist", "--------------------")
+      
         next({ 
           status: 404, 
           message: `reservation_id ${reservation_id} cannot be found.` });
@@ -78,7 +77,7 @@ function tableCapacity(req, res, next){
   const { capacity } = res.locals.table;
   const { people } = res.locals.reservation;
   if(capacity >= people){
-   //console.log(capacity)
+   
      return next();
   }else{
     return next({
@@ -91,9 +90,9 @@ function tableCapacity(req, res, next){
 //middleware checks if table is free
 function tableStatus(req, res, next){
   const { status } = res.locals.table
- // console.log(status )
+
   if(status === "free"){
-    //console.log("table is free", "----------")
+    
     return next()
   }else{
     return next ({
@@ -103,12 +102,11 @@ function tableStatus(req, res, next){
   }
 }
 
-//middleware checks if table is occupied
+
+
 function tableOccupied(req, res, next){
-  const { status } = res.locals.table
- // console.log(status )
-  if(status === "occupied"){
-    //console.log("table is free", "----------")
+  const { reservation_id } = res.locals.table
+  if(reservation_id){
     return next()
   }else{
     return next ({
@@ -118,10 +116,7 @@ function tableOccupied(req, res, next){
   }
 }
 
-// function read(req, res){
-//   const { table } = res.locals
-//   res.json({ data: table })
-// }
+
 
 async function list(req, res) {
   const table = await service.list();
@@ -137,41 +132,36 @@ async function create(req, res) {
 async function seatTable(req,res){
   const { table } = res.locals;
   const { table_id } = req.params;
-  // const table = await service.read(table_id);
+ 
   const { reservation_id } = res.locals.reservation;
-  //console.log(reservation_id,"-------------------")
+  
   const updatedTableData = {
     ...table,
     table_id: table_id,
     reservation_id: reservation_id,
     status: "occupied",
   }
-  //console.log(updatedTableData,"-----------------")
+  
   const updatedTable= await service.update(updatedTableData)
-  //console.log(updatedTable,"----------------")
+
   const reservationUpdate ={
     status: "seated",
     reservation_id: reservation_id,
     }
     await reservationService.update(reservationUpdate)
-    //console.log(updatedTable,"-----------------")
+    
     res.json({ data: updatedTable })
 }
 
-
-
-
-
 // finish an occupied table
 async function finish(req, res) {
-  const { table_id } = req.params;
   const { table } = res.locals;
   const updatedTableData = {
       ...table,
+      reservation_id: null,
       status: "free"
   }
   const updatedTable = await service.finish(updatedTableData);
-  // set reservation status to "finished" using reservation id
   const updatedReservation = {
       status: "finished", 
       reservation_id: table.reservation_id,

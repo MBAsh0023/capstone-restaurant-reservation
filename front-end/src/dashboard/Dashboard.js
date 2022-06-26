@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { listReservations, listTables } from "../utils/api";
-import ErrorAlert from "../layout/ErrorAlert";
-//import { useHistory} from "react-router";
+
 import { previous, next, today } from "../utils/date-time";
 import { Link } from "react-router-dom";
 import TableList from "./TableList";
 import ReservationInfo from "../layout/reservations/ReservationInfo";
-
 
 /**
  * Defines the dashboard page.
@@ -15,22 +13,21 @@ import ReservationInfo from "../layout/reservations/ReservationInfo";
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
-  //const history = useHistory();
+  
   const [reservations, setReservations] = useState([]);
   const [resError, setResError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
   const [tables, setTables] = useState([]);
- 
-
 
   useEffect(loadDashboard, [date]);
 
+  // load dashboard with reservations and tables data 
   function loadDashboard() {
     const abortController = new AbortController();
 
     setResError(null);
     setTablesError(null);
-    setReservations([])
+    setReservations([]);
 
     listReservations({ date: date }, abortController.signal)
       .then(setReservations)
@@ -46,68 +43,95 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
-
-
   return (
     <main>
-      <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for {date}</h4>
+      <h1 className="d-md-flex justify-content-center">Dashboard</h1>
+      <div>
+        <h4 className="d-md-flex mb-1 justify-content-center">
+          Reservations for {date}
+        </h4>
       </div>
-      <div>
-          <ErrorAlert error={resError} /> 
-        </div>
-      <div>
-        <table>
-          <thead>
-            <tr>
-            <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Phone Number</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th># of Guests</th>
-                <th>Status</th>
-                <th>Seat</th>
-                <th>Edit</th>
-                <th>Cancel</th>
-            </tr>
-          </thead>
-          {!reservations.length ? (
-            <p>No Reservations</p>
-          ) : (
-            <tbody>
-              {reservations.map((reservation, index) => (
-                <ReservationInfo key={reservation.id} reservation={reservation} loadDashboard={loadDashboard} />
-              ))}
-            </tbody>
-          )}
-        </table>
-      </div>
-      <div>
+    
+      <div className="d-md-flex justify-content-center py-3">
         <Link to={`/dashboard?date=${previous(date)}`}>
-          <button>Previous</button>
-        </Link> 
-         <Link to={`/dashboard?date=${today()}`}>
-          <button>Today</button>
+          <button type="button" className="btn btn-info mx-2">
+            Previous
+          </button>
+        </Link>
+        <Link to={`/dashboard?date=${today()}`}>
+          <button type="button" className="btn btn-info mx-2">
+            Today
+          </button>
         </Link>
         <Link to={`/dashboard?date=${next(date)}`}>
-          <button >Next</button>
+          <button type="button" className="btn btn-info mx-2">
+            Next
+          </button>
         </Link>
+      </div>
+      <div>
+        <table className="table table-striped table-hover">
+          <thead>
+            <tr className="table-info">
+              <th scope="col">ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Phone Number</th>
+              <th scope="col">Date</th>
+              <th scope="col">Time</th>
+              <th scope="col"># of Guests</th>
+              <th scope="col">Status</th>
+              <th scope="col">Seat</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Cancel</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reservations.length ? (
+              <>
+                {reservations.map((reservation, index) => (
+                  <ReservationInfo
+                    key={reservation.id}
+                    reservation={reservation}
+                    loadDashboard={loadDashboard}
+                  />
+                ))}
+              </>
+            ) : (
+              <tr>
+                <td colSpan="11">No Reservations</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       <div>
-        <h4>Table List</h4>
-        {tables.map((table, index) => (
-
-        <TableList key={table.table_id} table={table} error={tablesError} loadDashboard={loadDashboard}  />
-        ))}
+        <h4 className="d-md-flex mb-1 justify-content-center">Table List</h4>
+        <table className="table table-striped table-hover">
+          <thead>
+            <tr className="table-info">
+              <th scope="col">ID</th>
+              <th scope="col">Table Name</th>
+              <th scope="col">Capacity</th>
+              <th scope="col">Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {tables.map((table, index) => (
+              <TableList
+                key={table.table_id}
+                table={table}
+                error={tablesError}
+                loadDashboard={loadDashboard}
+              />
+            ))}
+          </tbody>
+        </table>
       </div>
-      {/* {JSON.stringify(reservations)} */}
     </main>
   );
-} 
-
+}
 
 export default Dashboard;

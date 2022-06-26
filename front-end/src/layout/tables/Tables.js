@@ -40,13 +40,14 @@ function Tables() {
 
   return (
     <div>
-      <h1>Tables</h1>
+      <h1 className="d-md-flex justify-content-center p-3">Tables</h1>
       <div>
         <ErrorAlert error={tableError} />
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="mb-3">
           <div>
-            <label>Table Name:</label>
+            <label className="form-label">Table Name:</label>
             <input
+            className="form-control mb-3"
               type="text"
               name="table_name"
               value={tableForm.table_name}
@@ -55,8 +56,9 @@ function Tables() {
             />
           </div>
           <div>
-            <label>Table Capacity:</label>
+            <label className="form-label">Table Capacity:</label>
             <input
+            className="form-control mb-3"
               type="number"
               name="capacity"
               value={tableForm.capacity}
@@ -64,8 +66,8 @@ function Tables() {
               required
             />
           </div>
-          <button type="submit">Submit</button>
-          <button onClick={handleCancel}>Cancel</button>
+          <button className="btn btn-info mt-2 mx-2"type="submit">Submit</button>
+          <button onClick={handleCancel} className="btn btn-warning mt-2 mx-2">Cancel</button>
         </form>
       </div>
     </div>
